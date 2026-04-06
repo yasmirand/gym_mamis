@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modo Deusa — Calculadora IMC</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<div id="navbar"></div>
+<script src="nav.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #130810;
+    --surface: #1c0d18;
+    --card: #211020;
+    --border: rgba(236,168,196,0.15);
+    --border-strong: rgba(236,168,196,0.3);
+    --rose: #e8a0bf;
+    --rose-light: #f5bdd5;
+    --cream: #faeef5;
+    --cream-dim: rgba(250,238,245,0.55);
+    --muted: rgba(236,168,196,0.4);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 50% at 50% 30%, rgba(232,160,191,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 52px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 60px;
+    letter-spacing: 3px;
+    text-align: center;
+    color: var(--cream);
+    line-height: 0.9;
+    margin-bottom: 8px;
+  }
+
+  .page-title .italic {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 46px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: var(--rose-light);
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--cream-dim);
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 300;
+  }
+
+  /* FORM */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 10px;
+  }
+
+  .form-group { margin-bottom: 22px; }
+  .form-group:last-child { margin-bottom: 0; }
+
+  .form-group label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .form-group input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 14px 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-group input:focus { border-color: var(--rose); }
+  .form-group input::placeholder { color: var(--muted); font-weight: 400; font-size: 20px; }
+
+  .calc-btn {
+    width: 100%;
+    background: var(--rose);
+    border: none;
+    border-radius: 3px;
+    padding: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 10px;
+  }
+
+  .calc-btn:hover { background: var(--rose-light); }
+
+  /* RESULT */
+  .result {
+    display: none;
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 32px 28px;
+    margin-top: 12px;
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+  .result.show { display: block; }
+
+  .imc-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 96px;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .imc-class {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .imc-scale {
+    margin: 0 0 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+
+  .scale-bar {
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #a8c0e8, #8fbc8f, #f5bdd5, #d45e8a, #b03a6e);
+    margin: 12px 0 8px;
+    position: relative;
+  }
+
+  .scale-marker {
+    position: absolute;
+    top: -5px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--rose);
+    border: 2px solid var(--bg);
+    transform: translateX(-50%);
+    transition: left 0.6s ease;
+  }
+
+  .scale-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .imc-desc {
+    font-size: 13px;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    font-weight: 300;
+    text-align: left;
+  }
+
+  /* NOTES */
+  .notes {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin-top: 12px;
+  }
+
+  .notes-title {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .note-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--cream-dim);
+    margin-bottom: 10px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .note-item:last-child { margin-bottom: 0; }
+
+  .note-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--rose);
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="page-label">Acompanhe seu progresso</div>
+  <div class="page-title">CALC.<br><span class="italic">de IMC</span></div>
+  <div class="subtitle">Calcula todo mês para ver sua evolução.</div>
+
+  <div class="form-card">
+    <div class="form-group">
+      <label>Peso atual (kg)</label>
+      <input type="number" id="peso" placeholder="67" min="30" max="200" step="0.1">
+    </div>
+    <div class="form-group">
+      <label>Altura (cm)</label>
+      <input type="number" id="altura" placeholder="165" min="100" max="220">
+    </div>
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">Calcular IMC</button>
+
+  <div class="result" id="result">
+    <div class="imc-val" id="imcVal">—</div>
+    <div class="imc-class" id="imcClass">—</div>
+    <div class="imc-scale">
+      <div class="scale-bar">
+        <div class="scale-marker" id="marker" style="left:50%"></div>
+      </div>
+      <div class="scale-labels">
+        <span>Baixo</span>
+        <span>Normal</span>
+        <span>Sobrepeso</span>
+        <span>Alto</span>
+      </div>
+    </div>
+    <div class="imc-desc" id="imcDesc"></div>
+  </div>
+
+  <div class="notes">
+    <div class="notes-title">Sobre o IMC</div>
+    <div class="note-item"><div class="note-dot"></div>IMC é um indicador, não uma verdade absoluta. Pessoas com mais músculo podem ter IMC alto e serem saudáveis.</div>
+    <div class="note-item"><div class="note-dot"></div>Para mulheres jovens, o mais importante é a composição corporal — gordura vs músculo — não só o peso.</div>
+    <div class="note-item"><div class="note-dot"></div>Tirando fotos mensais você vai ver a diferença melhor do que na balança.</div>
+    <div class="note-item"><div class="note-dot"></div>Calcule todo mês para acompanhar a evolução real da sua jornada.</div>
+  </div>
+</div>
+
+<script>
+  function calcular() {
+    const peso = parseFloat(document.getElementById('peso').value);
+    const alturaCm = parseFloat(document.getElementById('altura').value);
+    if (!peso || !alturaCm || peso < 30 || alturaCm < 100) {
+      alert('Preenche peso e altura corretamente!');
+      return;
+    }
+    const h = alturaCm / 100;
+    const imc = peso / (h * h);
+    const res = document.getElementById('result');
+    res.classList.add('show');
+    document.getElementById('imcVal').textContent = imc.toFixed(1);
+
+    let cls, color, desc, pct;
+    if (imc < 18.5) {
+      cls = 'Abaixo do Peso'; color = '#a8c0e8'; pct = 10;
+      desc = 'Seu IMC indica que você está abaixo do peso saudável. Foca em ganhar massa muscular com treino e alimentação adequada.';
+    } else if (imc < 25) {
+      cls = 'Peso Normal ✦'; color = '#8fbc8f'; pct = 35;
+      desc = 'Seu IMC está na faixa saudável. Agora é hora de melhorar a composição corporal — mais músculo, menos gordura.';
+    } else if (imc < 30) {
+      cls = 'Sobrepeso'; color = '#f5bdd5'; pct = 60;
+      desc = 'IMC indica sobrepeso. Com consistência no treino e alimentação, você vai chegar na faixa normal em alguns meses. Você está no caminho certo.';
+    } else if (imc < 35) {
+      cls = 'Obesidade Grau I'; color = '#d45e8a'; pct = 78;
+      desc = 'IMC na faixa de obesidade. Consultar um médico ou nutricionista é importante. Treino e alimentação saudável são fundamentais agora.';
+    } else {
+      cls = 'Obesidade Grau II+'; color = '#b03a6e'; pct = 92;
+      desc = 'Consulte um médico para orientação específica. Pequenas mudanças consistentes fazem uma grande diferença ao longo do tempo.';
+    }
+
+    document.getElementById('imcClass').textContent = cls;
+    document.getElementById('imcClass').style.color = color;
+    document.getElementById('imcVal').style.color = color;
+    document.getElementById('imcDesc').textContent = desc;
+    document.getElementById('marker').style.left = pct + '%';
+    res.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+</script>
+</body>
+</html>

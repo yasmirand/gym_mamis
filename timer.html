@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modo Deusa — Timer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<div id="navbar"></div>
+<script src="nav.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #130810;
+    --surface: #1c0d18;
+    --card: #211020;
+    --border: rgba(236,168,196,0.15);
+    --border-strong: rgba(236,168,196,0.3);
+    --rose: #e8a0bf;
+    --rose-light: #f5bdd5;
+    --cream: #faeef5;
+    --cream-dim: rgba(250,238,245,0.55);
+    --coral: #d45e8a;
+    --muted: rgba(236,168,196,0.4);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 60% at 50% 30%, rgba(232,160,191,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 52px 24px 80px;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--rose);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    letter-spacing: 3px;
+    text-align: center;
+    color: var(--cream);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--cream-dim);
+    text-align: center;
+    margin-bottom: 44px;
+    font-weight: 300;
+  }
+
+  /* PRESETS */
+  .presets {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 44px;
+  }
+
+  .preset-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 8px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .preset-btn:hover,
+  .preset-btn.active {
+    background: rgba(232,160,191,0.1);
+    border-color: var(--rose);
+    color: var(--rose);
+  }
+
+  /* TIMER RING */
+  .timer-ring {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    margin: 0 auto 40px;
+  }
+
+  .timer-ring svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+  }
+
+  .ring-bg { fill: none; stroke: var(--border); stroke-width: 3; }
+  .ring-prog { fill: none; stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 0.5s linear; }
+
+  .timer-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .timer-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    letter-spacing: 4px;
+    line-height: 1;
+    color: var(--rose-light);
+  }
+
+  .timer-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 14px 28px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--cream-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    min-width: 110px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+
+  .ctrl-btn.primary {
+    background: var(--rose);
+    border-color: var(--rose);
+    color: var(--bg);
+  }
+
+  .ctrl-btn:hover:not(.primary) { border-color: var(--rose); color: var(--rose); }
+  .ctrl-btn.primary:hover { background: var(--rose-light); }
+
+  /* SETS */
+  .sets-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .sets-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  .sets-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 64px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 16px;
+    color: var(--rose-light);
+  }
+
+  .sets-btns { display: flex; gap: 8px; justify-content: center; }
+
+  .set-btn {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    padding: 10px 20px;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--rose);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Cormorant Garamond', serif;
+  }
+
+  .set-btn:hover { background: rgba(232,160,191,0.1); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="page-label">Descanso entre séries</div>
+  <div class="page-title">TIMER</div>
+  <div class="subtitle">Escolhe o tempo e descansa direito.</div>
+
+  <div class="presets">
+    <button class="preset-btn" onclick="setTime(30)">30s</button>
+    <button class="preset-btn active" onclick="setTime(45)">45s</button>
+    <button class="preset-btn" onclick="setTime(60)">1 min</button>
+    <button class="preset-btn" onclick="setTime(75)">75s</button>
+    <button class="preset-btn" onclick="setTime(90)">90s</button>
+    <button class="preset-btn" onclick="setTime(120)">2 min</button>
+  </div>
+
+  <div class="timer-ring">
+    <svg width="240" height="240" viewBox="0 0 240 240">
+      <circle class="ring-bg" cx="120" cy="120" r="110"/>
+      <circle class="ring-prog" id="ring" cx="120" cy="120" r="110"
+        stroke="url(#grad)"
+        stroke-dasharray="691.15"
+        stroke-dashoffset="0"/>
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#e8a0bf"/>
+          <stop offset="100%" style="stop-color:#d45e8a"/>
+        </linearGradient>
+      </defs>
+    </svg>
+    <div class="timer-center">
+      <div class="timer-display" id="display">0:45</div>
+      <div class="timer-label" id="status">Pronto</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn primary" id="startBtn" onclick="startStop()">▶ Iniciar</button>
+    <button class="ctrl-btn" onclick="reset()">↺ Reset</button>
+  </div>
+
+  <div class="sets-card">
+    <div class="sets-label">Séries completas</div>
+    <div class="sets-val" id="setsVal">0</div>
+    <div class="sets-btns">
+      <button class="set-btn" onclick="changeSets(-1)">−</button>
+      <button class="set-btn" onclick="changeSets(1)">+</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let total = 45, remaining = 45, interval = null, running = false, sets = 0;
+  const circ = 691.15;
+
+  function setTime(s) {
+    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    total = s; remaining = s;
+    if (running) { clearInterval(interval); running = false; document.getElementById('startBtn').textContent = '▶ Iniciar'; }
+    updateDisplay();
+  }
+
+  function startStop() {
+    if (running) {
+      clearInterval(interval); running = false;
+      document.getElementById('startBtn').textContent = '▶ Iniciar';
+      document.getElementById('status').textContent = 'Pausado';
+    } else {
+      if (remaining === 0) { remaining = total; }
+      running = true;
+      document.getElementById('startBtn').textContent = '⏸ Pausar';
+      document.getElementById('status').textContent = 'Descansando...';
+      interval = setInterval(() => {
+        remaining--;
+        updateDisplay();
+        if (remaining <= 0) {
+          clearInterval(interval); running = false;
+          document.getElementById('startBtn').textContent = '▶ Iniciar';
+          document.getElementById('status').textContent = '✦ Vai!';
+          sets++;
+          document.getElementById('setsVal').textContent = sets;
+          try { new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAA==').play(); } catch(e) {}
+        }
+      }, 1000);
+    }
+  }
+
+  function reset() {
+    clearInterval(interval); running = false; remaining = total;
+    document.getElementById('startBtn').textContent = '▶ Iniciar';
+    document.getElementById('status').textContent = 'Pronto';
+    updateDisplay();
+  }
+
+  function changeSets(d) {
+    sets = Math.max(0, sets + d);
+    document.getElementById('setsVal').textContent = sets;
+  }
+
+  function updateDisplay() {
+    const m = Math.floor(remaining / 60), s = remaining % 60;
+    document.getElementById('display').textContent = m + ':' + String(s).padStart(2, '0');
+    const pct = remaining / total;
+    document.getElementById('ring').style.strokeDashoffset = circ * (1 - pct);
+  }
+
+  updateDisplay();
+</script>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modo Deusa — Progressão</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<div id="navbar"></div>
+<script src="nav.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #130810;
+    --surface: #1c0d18;
+    --card: #211020;
+    --border: rgba(236,168,196,0.15);
+    --rose: #e8a0bf;
+    --rose-light: #f5bdd5;
+    --coral: #d45e8a;
+    --green: #8fbc8f;
+    --cream: #faeef5;
+    --muted: rgba(236,168,196,0.4);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 20%, rgba(168,85,247,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 80%, rgba(244,114,182,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .header .tag {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--rose), var(--rose-light));
+    color: #fff;
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 8vw, 68px);
+    font-weight: 900;
+    line-height: 0.95;
+    margin-bottom: 14px;
+  }
+
+  .header h1 span {
+    background: linear-gradient(135deg, var(--rose), var(--coral));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .header p { color: var(--muted); font-size: 15px; max-width: 480px; margin: 0 auto; line-height: 1.7; font-weight: 600; }
+
+  /* REGRA */
+  .rule-box {
+    background: linear-gradient(135deg, rgba(244,114,182,0.08), rgba(168,85,247,0.05));
+    border: 1px solid rgba(244,114,182,0.25);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 36px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .rule-box h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--rose);
+    margin-bottom: 12px;
+  }
+
+  .rule-box p { font-size: 14px; color: #9a7aaa; line-height: 1.8; font-weight: 600; }
+  .rule-box b { color: var(--cream); }
+
+  /* SECTION */
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section { margin-bottom: 40px; animation: fadeUp 0.5s ease both; }
+
+  /* PHASE CARDS */
+  .phases { display: flex; flex-direction: column; gap: 12px; }
+
+  .phase-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .phase-header {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+  }
+
+  .phase-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+    opacity: 0.2;
+  }
+
+  .phase-info h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .phase-info p { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+  .phase-weeks {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .phase-body {
+    padding: 0 24px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .phase-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .phase-item {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+  }
+
+  .phase-item .pi-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .phase-item .pi-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+
+  /* TABLE */
+  .prog-table {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  .prog-table-header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .prog-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr 2fr;
+    gap: 8px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .prog-row:last-child { border-bottom: none; }
+  .prog-row:hover { background: rgba(244,114,182,0.04); }
+
+  .prog-row .ex { font-weight: 800; }
+  .prog-row .note { font-size: 11px; color: var(--muted); }
+
+  /* SIGNS */
+  .signs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+  .sign-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .sign-card h4 { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; margin-bottom: 12px; }
+  .sign-card.good h4 { color: var(--green); }
+  .sign-card.bad h4 { color: #fb7185; }
+
+  .sign-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .sign-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .good .sign-dot { background: var(--green); }
+  .bad .sign-dot { background: #fb7185; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border);
+    border-radius: 2px;
+  }
+
+  .tl-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .tl-item.active .tl-dot {
+    background: linear-gradient(135deg, var(--rose), var(--rose-light));
+    border-color: var(--rose);
+  }
+
+  .tl-week { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 800; margin-bottom: 4px; }
+  .tl-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .tl-desc { font-size: 13px; color: var(--muted); font-weight: 600; line-height: 1.6; }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .phase-grid { grid-template-columns: repeat(2, 1fr); }
+    .prog-table-header { grid-template-columns: 2fr 1fr 1fr; }
+    .prog-row { grid-template-columns: 2fr 1fr 1fr; }
+    .prog-table-header > :nth-child(4),
+    .prog-table-header > :nth-child(5),
+    .prog-row > :nth-child(4),
+    .prog-row > :nth-child(5) { display: none; }
+    .signs { grid-template-columns: 1fr; }
+    .phase-header { grid-template-columns: auto 1fr; }
+    .phase-weeks { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <div class="tag">📈 Guia de Progressão de Carga</div>
+    <h1>COMO<br><span>EVOLUIR</span></h1>
+    <p>Progressão de carga é o que separa quem muda o corpo de quem só "vai na academia". Segue esse guia e você vai sempre estar evoluindo. 💜</p>
+  </div>
+
+  <!-- REGRA -->
+  <div class="rule-box">
+    <h3>🌸 A Regra de Ouro da Progressão</h3>
+    <p>O músculo só cresce quando você o obriga a fazer mais do que ele já está acostumado. Isso se chama <b>sobrecarga progressiva</b>. Existem 3 formas de fazer isso: <b>aumentar o peso</b>, <b>aumentar as repetições</b> ou <b>diminuir o descanso</b>. Você deve sempre estar tentando melhorar pelo menos uma dessas coisas a cada semana.</p>
+  </div>
+
+  <!-- FASES -->
+  <div class="section">
+    <div class="section-title">🗓️ As 3 Fases do Programa</div>
+    <div class="phases">
+
+      <div class="phase-card">
+        <div class="phase-header">
+          <div class="phase-num" style="color:var(--rose)">01</div>
+          <div class="phase-info">
+            <h4 style="color:var(--rose)">Adaptação — Aprender o Movimento</h4>
+            <p>Foco em técnica perfeita, não em peso máximo</p>
+          </div>
+          <div class="phase-weeks" style="color:var(--rose)">Semanas 1–3</div>
+        </div>
+        <div class="phase-body">
+          <div style="font-size:13px;color:#9a7aaa;line-height:1.8;font-weight:600;">
+            Nas primeiras 3 semanas, o objetivo é <strong style="color:var(--cream)">aprender cada exercício certinho</strong>. Use pesos leves que permitam fazer todas as repetições com boa forma. Se sentir dor (não queimação, mas dor real), para e ajusta. Seu corpo está se adaptando — é normal sentir dor muscular no dia seguinte.
+          </div>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--rose)">Leve</div>
+              <div class="pi-label">Carga</div>
+            </div>
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--rose)">12–15</div>
+              <div class="pi-label">Reps foco</div>
+            </div>
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--rose)">90s</div>
+              <div class="pi-label">Descanso</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header">
+          <div class="phase-num" style="color:var(--rose-light)">02</div>
+          <div class="phase-info">
+            <h4 style="color:var(--rose-light)">Progressão — Crescimento Ativo</h4>
+            <p>Aumenta o peso quando sentir que ficou fácil demais</p>
+          </div>
+          <div class="phase-weeks" style="color:var(--rose-light)">Semanas 4–10</div>
+        </div>
+        <div class="phase-body">
+          <div style="font-size:13px;color:#9a7aaa;line-height:1.8;font-weight:600;">
+            Agora começa a progressão de verdade. Quando conseguir fazer <strong style="color:var(--cream)">todas as repetições com boa forma</strong> e ainda sentir que sobrou energia, é hora de aumentar. <strong style="color:var(--cream)">Regra: conseguiu fazer todas as séries com facilidade? Na próxima sessão, aumenta o peso.</strong>
+          </div>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--rose-light)">+2kg</div>
+              <div class="pi-label">Incremento</div>
+            </div>
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--rose-light)">1x/sem</div>
+              <div class="pi-label">Frequência</div>
+            </div>
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--rose-light)">75s</div>
+              <div class="pi-label">Descanso</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-card">
+        <div class="phase-header">
+          <div class="phase-num" style="color:var(--coral)">03</div>
+          <div class="phase-info">
+            <h4 style="color:var(--coral)">Consolidação — Definição e Shape</h4>
+            <p>Mantém a carga, foca na qualidade e no volume</p>
+          </div>
+          <div class="phase-weeks" style="color:var(--coral)">Semanas 11–16</div>
+        </div>
+        <div class="phase-body">
+          <div style="font-size:13px;color:#9a7aaa;line-height:1.8;font-weight:600;">
+            Depois de meses construindo a base, o foco muda para <strong style="color:var(--cream)">definição e qualidade</strong>. Pode até reduzir um pouco o peso e aumentar as repetições. Reduz o descanso entre séries. Aqui é onde o corpo começa a parecer com o que você quer.
+          </div>
+          <div class="phase-grid">
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--coral)">Mantém</div>
+              <div class="pi-label">Carga</div>
+            </div>
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--coral)">15–20</div>
+              <div class="pi-label">Reps foco</div>
+            </div>
+            <div class="phase-item">
+              <div class="pi-val" style="color:var(--coral)">45s</div>
+              <div class="pi-label">Descanso</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TABELA DE PROGRESSÃO -->
+  <div class="section">
+    <div class="section-title">📊 Tabela de Progressão por Exercício</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;font-weight:600;">Valores de referência para começar. Ajuste baseado na sua realidade — o importante é o esforço, não o número.</div>
+
+    <div class="prog-table">
+      <div class="prog-table-header">
+        <div>Exercício</div>
+        <div>Início</div>
+        <div>Mês 2</div>
+        <div>Mês 4</div>
+        <div>Dica</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Hip Thrust</div>
+        <div style="color:var(--rose)">20kg</div>
+        <div style="color:var(--rose-light)">40kg</div>
+        <div style="color:var(--coral)">60kg+</div>
+        <div class="note">Mais importante de todos — progredir aqui é prioridade</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Leg Press</div>
+        <div style="color:var(--rose)">40kg</div>
+        <div style="color:var(--rose-light)">70kg</div>
+        <div style="color:var(--coral)">100kg+</div>
+        <div class="note">Pernas são fortes — não tenha medo de colocar carga</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Stiff halteres</div>
+        <div style="color:var(--rose)">8kg</div>
+        <div style="color:var(--rose-light)">14kg</div>
+        <div style="color:var(--coral)">20kg+</div>
+        <div class="note">Aumenta só quando a técnica estiver perfeita</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Abdutora/Adutora</div>
+        <div style="color:var(--rose)">20kg</div>
+        <div style="color:var(--rose-light)">35kg</div>
+        <div style="color:var(--coral)">50kg+</div>
+        <div class="note">Volume alto (20 rep) — não precisa ser pesada demais</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Pulldown</div>
+        <div style="color:var(--rose)">15kg</div>
+        <div style="color:var(--rose-light)">25kg</div>
+        <div style="color:var(--coral)">35kg+</div>
+        <div class="note">Foca em sentir o dorsal — não balance o corpo</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Elevação lateral</div>
+        <div style="color:var(--rose)">2kg</div>
+        <div style="color:var(--rose-light)">4kg</div>
+        <div style="color:var(--coral)">6kg+</div>
+        <div class="note">Ombro → sempre mais leve do que você acha que precisa</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Rosca direta</div>
+        <div style="color:var(--rose)">5kg</div>
+        <div style="color:var(--rose-light)">8kg</div>
+        <div style="color:var(--coral)">12kg+</div>
+        <div class="note">Sem balançar o tronco — se precisar, o peso está pesado demais</div>
+      </div>
+      <div class="prog-row">
+        <div class="ex">Tríceps polia</div>
+        <div style="color:var(--rose)">10kg</div>
+        <div style="color:var(--rose-light)">18kg</div>
+        <div style="color:var(--coral)">25kg+</div>
+        <div class="note">Cotovelos fixos — o braço só move no cotovelo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SINAIS -->
+  <div class="section">
+    <div class="section-title">🔍 Como Saber se Está na Hora de Aumentar</div>
+    <div class="signs">
+      <div class="sign-card good">
+        <h4>✅ Pode aumentar quando...</h4>
+        <div class="sign-item"><span class="sign-dot"></span>Conseguiu todas as séries e reps com boa forma</div>
+        <div class="sign-item"><span class="sign-dot"></span>Sentiu que sobrou energia no final</div>
+        <div class="sign-item"><span class="sign-dot"></span>Fez o mesmo exercício 2x seguidas sem dificuldade</div>
+        <div class="sign-item"><span class="sign-dot"></span>Não sente a "queimação" das primeiras semanas</div>
+        <div class="sign-item"><span class="sign-dot"></span>A última série pareceu fácil demais</div>
+      </div>
+      <div class="sign-card bad">
+        <h4>❌ Ainda não aumenta se...</h4>
+        <div class="sign-item"><span class="sign-dot"></span>Não conseguiu completar todas as séries</div>
+        <div class="sign-item"><span class="sign-dot"></span>A forma técnica ficou ruim nas últimas reps</div>
+        <div class="sign-item"><span class="sign-dot"></span>Sentiu dor (não queimação) durante o exercício</div>
+        <div class="sign-item"><span class="sign-dot"></span>Está na primeira semana de um exercício novo</div>
+        <div class="sign-item"><span class="sign-dot"></span>Está com dor muscular intensa do treino anterior</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section">
+    <div class="section-title">🌸 O que Esperar a Cada Mês</div>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;">
+      <div class="timeline">
+        <div class="tl-item active">
+          <div class="tl-dot"></div>
+          <div class="tl-week">Semanas 1–2</div>
+          <div class="tl-title" style="color:var(--rose)">Adaptação e Dor Muscular</div>
+          <div class="tl-desc">É normal doer bastante. Seu corpo está se adaptando ao estímulo novo. Não desiste — isso passa na terceira semana. Foca em aprender os movimentos corretamente.</div>
+        </div>
+        <div class="tl-item active">
+          <div class="tl-dot"></div>
+          <div class="tl-week">Semanas 3–4</div>
+          <div class="tl-title" style="color:var(--rose)">Força Sobe Rápido</div>
+          <div class="tl-desc">Você vai notar que está mais forte. Isso é normal — no começo a melhora é muito rápida. Aproveita para ir aumentando o peso gradualmente.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-week">Mês 2</div>
+          <div class="tl-title" style="color:var(--rose-light)">Primeiros Resultados Visíveis</div>
+          <div class="tl-desc">O corpo começa a ficar diferente. Roupas ficam levemente diferentes. O glúteo começa a ganhar forma. A balança pode não mudar tanto, mas o espelho vai mudar.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-week">Mês 3</div>
+          <div class="tl-title" style="color:var(--rose-light)">Shape Aparece</div>
+          <div class="tl-desc">As pessoas ao redor começam a notar. Cintura mais fina, glúteo mais definido, perna com mais forma. A gordura está saindo e o músculo está crescendo. Mantém a consistência.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-week">Mês 4+</div>
+          <div class="tl-title" style="color:var(--coral)">Transformação Real</div>
+          <div class="tl-desc">Com 4 meses de consistência, você vai se reconhecer diferente no espelho. A meta de 57kg pode estar muito próxima. O mais importante é que o corpo vai ter shape, não só peso baixo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DICA FINAL -->
+  <div style="background:linear-gradient(135deg,rgba(244,114,182,0.08),rgba(168,85,247,0.06));border:1px solid rgba(244,114,182,0.25);border-radius:14px;padding:28px;text-align:center;">
+    <h2 style="font-family:'Playfair Display',serif;font-size:28px;font-weight:900;margin-bottom:8px;background:linear-gradient(135deg,var(--rose),var(--coral));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">💜 Lembra Sempre</h2>
+    <p style="color:var(--muted);font-size:14px;max-width:500px;margin:0 auto;line-height:1.8;font-weight:600;">Progressão não é linear. Vai ter semanas ótimas e semanas ruins. O que importa é a <strong style="color:var(--rose)">tendência ao longo dos meses</strong>. Registra seus pesos, tira fotos mensais e confia no processo. Você vai se surpreender com o resultado.</p>
+  </div>
+
+</div>
+<script>
+  // nada necessário aqui
+</script>
+</body>
+</html>
